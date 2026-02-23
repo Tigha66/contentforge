@@ -130,7 +130,7 @@ export default function PricingPage() {
                 onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
                 disabled={loading !== null}
                 className={`w-full py-3 rounded-xl font-medium transition flex items-center justify-center gap-2 ${
-                  plan.highmark
+                  plan.highlight
                     ? 'bg-white text-orange-600 hover:bg-gray-100'
                     : 'bg-slate-700 hover:bg-slate-600 text-white'
                 } disabled:opacity-50`}
