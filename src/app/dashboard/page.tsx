@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Zap, Twitter, Linkedin, Instagram, Copy, Check, RefreshCw, Sparkles, Hash, Calendar, BarChart3, Plus } from 'lucide-react'
+import { Zap, Twitter, Linkedin, Instagram, Copy, Check, RefreshCw, Sparkles, Hash, Calendar, BarChart3, Plus, MessageSquare } from 'lucide-react'
 
 const contentTypes = [
   { id: 'tweet', name: 'Tweet', icon: <Twitter className="w-5 h-5" />, color: 'text-blue-400', bg: 'bg-blue-400/10' },
