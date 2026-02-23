@@ -39,7 +39,7 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-4">
             <Link href="/signin" className="text-slate-300 hover:text-white transition">Sign In</Link>
-            <Link href="/dashboard" className="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-5 py-2 rounded-full font-medium transition">
+            <Link href="/signup" className="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-5 py-2 rounded-full font-medium transition">
               Get Started Free
             </Link>
           </div>
@@ -62,7 +62,7 @@ export default function Home() {
             Save 10+ hours every week. Perfect for creators, marketers, and businesses.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/dashboard" className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-8 py-4 rounded-full font-semibold text-lg transition flex items-center justify-center gap-2">
+            <Link href="/signup" className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-8 py-4 rounded-full font-semibold text-lg transition flex items-center justify-center gap-2">
               Start Generating Free <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="#features" className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition border border-slate-700">
@@ -125,7 +125,7 @@ export default function Home() {
                 <li className="flex items-center gap-2 text-slate-300"><Check className="w-5 h-5 text-green-400" /> Basic templates</li>
                 <li className="flex items-center gap-2 text-slate-300"><Check className="w-5 h-5 text-green-400" /> Twitter support</li>
               </ul>
-              <Link href="/dashboard" className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-medium transition text-center block">Get Started</Link>
+              <Link href="/signup" className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-medium transition text-center block">Get Started</Link>
             </div>
             <div className="bg-gradient-to-br from-orange-600 to-pink-600 border border-transparent rounded-2xl p-8 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</div>
@@ -178,7 +178,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to create viral content?</h2>
           <p className="text-slate-400 mb-8 text-lg">Join 10,000+ creators generating content faster</p>
-          <Link href="/dashboard" className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-10 py-4 rounded-full font-semibold text-lg transition">
+          <Link href="/signup" className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-10 py-4 rounded-full font-semibold text-lg transition">
             <Zap className="w-5 h-5" /> Start Generating Free
           </Link>
         </div>

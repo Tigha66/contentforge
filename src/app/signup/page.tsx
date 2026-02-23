@@ -3,15 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Zap, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Zap, Mail, Lock, User, ArrowRight } from 'lucide-react'
 import { useAuth } from '../auth-context'
 
-export default function SignInPage() {
+export default function SignUpPage() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { signUp } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,23 +21,17 @@ export default function SignInPage() {
     setLoading(true)
 
     try {
-      const success = await signIn(email, password)
+      const success = await signUp(email, password, name)
       if (success) {
         router.push('/dashboard')
       } else {
-        setError('Invalid email or password')
+        setError('Email already exists')
       }
     } catch (err) {
       setError('Something went wrong')
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleDemoLogin = async () => {
-    setLoading(true)
-    await signIn('demo@contentforge.app', 'demo123')
-    router.push('/dashboard')
   }
 
   return (
@@ -49,25 +44,8 @@ export default function SignInPage() {
         </Link>
 
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
-          <h1 className="text-3xl font-bold text-white text-center mb-2">Welcome Back</h1>
-          <p className="text-slate-400 text-center mb-8">Sign in to your account</p>
-
-          {/* Demo Login */}
-          <button
-            onClick={handleDemoLogin}
-            className="w-full bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2 mb-6"
-          >
-            Try Demo Account
-          </button>
-
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-600"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-slate-800 text-slate-400">or continue with email</span>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-white text-center mb-2">Create Account</h1>
+          <p className="text-slate-400 text-center mb-8">Start generating content for free</p>
 
           {error && (
             <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-2 rounded-lg mb-4 text-sm">
@@ -76,6 +54,21 @@ export default function SignInPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-slate-300 text-sm font-medium mb-2">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  required
+                  className="w-full bg-slate-900/50 border border-slate-600 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:border-orange-500 focus:outline-none transition"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-slate-300 text-sm font-medium mb-2">Email</label>
               <div className="relative">
@@ -101,6 +94,7 @@ export default function SignInPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  minLength={6}
                   className="w-full bg-slate-900/50 border border-slate-600 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:border-orange-500 focus:outline-none transition"
                 />
               </div>
@@ -111,15 +105,15 @@ export default function SignInPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 disabled:opacity-50 text-white py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2"
             >
-              {loading ? 'Signing in...' : 'Sign In'} <ArrowRight className="w-5 h-5" />
+              {loading ? 'Creating Account...' : 'Create Account'} <ArrowRight className="w-5 h-5" />
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-400">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-orange-400 hover:text-orange-300 font-medium">
-                Sign up free
+              Already have an account?{' '}
+              <Link href="/signin" className="text-orange-400 hover:text-orange-300 font-medium">
+                Sign in
               </Link>
             </p>
           </div>

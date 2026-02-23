@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { AuthProvider } from './auth-context'
 
 export const metadata: Metadata = {
   title: 'ContentForge - AI Content Generator for Social Media',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="text-white">{children}</body>
+      <body className="text-white">
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }

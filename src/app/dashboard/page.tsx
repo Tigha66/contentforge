@@ -1,25 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Zap, Twitter, Linkedin, Instagram, Copy, Check, RefreshCw, Sparkles, Hash, Calendar, BarChart3, Plus, MessageSquare } from 'lucide-react'
-
-const contentTypes = [
-  { id: 'tweet', name: 'Tweet', icon: <Twitter className="w-5 h-5" />, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-  { id: 'thread', name: 'Thread', icon: <MessageSquare className="w-5 h-5" />, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  { id: 'linkedin', name: 'LinkedIn Post', icon: <Linkedin className="w-5 h-5" />, color: 'text-blue-600', bg: 'bg-blue-600/10' },
-  { id: 'instagram', name: 'Instagram', icon: <Instagram className="w-5 h-5" />, color: 'text-pink-500', bg: 'bg-pink-500/10' },
-]
+import { useRouter } from 'next/navigation'
+import { Zap, Twitter, Linkedin, Instagram, Copy, Check, RefreshCw, Sparkles, LogOut, User } from 'lucide-react'
+import { useAuth } from '../auth-context'
 
 const tones = ['Casual', 'Professional', 'Funny', 'Inspirational', 'Controversial']
 
 export default function Dashboard() {
+  const { user, signOut } = useAuth()
+  const router = useRouter()
   const [prompt, setPrompt] = useState('')
   const [contentType, setContentType] = useState('tweet')
   const [tone, setTone] = useState('Casual')
   const [generating, setGenerating] = useState(false)
   const [generated, setGenerated] = useState<string[]>([])
   const [copied, setCopied] = useState<number | null>(null)
+  const [generationsLeft, setGenerationsLeft] = useState(5)
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/signin')
+    } else {
+      setGenerationsLeft(user.generationsLeft)
+    }
+  }, [user, router])
+
+  const handleSignOut = () => {
+    signOut()
+    router.push('/')
+  }
 
   const generatedContent = [
     "🚀 5 ways to 10x your productivity as a creator:\n\n1. Batch your content creation\n2. Use AI to help ideation\n3. Repurpose content across platforms\n4. Build in public\n5. Focus on ONE thing\n\nWhich one resonates most? 👇",
@@ -28,17 +39,22 @@ export default function Dashboard() {
   ]
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return
+    if (!prompt.trim() || generationsLeft <= 0) return
     setGenerating(true)
     await new Promise(resolve => setTimeout(resolve, 2000))
     setGenerated(generatedContent)
     setGenerating(false)
+    setGenerationsLeft(prev => prev - 1)
   }
 
   const handleCopy = (index: number, text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(index)
     setTimeout(() => setCopied(null), 2000)
+  }
+
+  if (!user) {
+    return null
   }
 
   return (
@@ -53,9 +69,17 @@ export default function Dashboard() {
             <span className="text-xl font-bold text-white">ContentForge</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/pricing" className="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 text-white px-5 py-2 rounded-full font-medium transition">
-              Upgrade to Pro
-            </Link>
+            <div className="flex items-center gap-2 text-slate-300">
+              <User className="w-4 h-4" />
+              <span>{user.name}</span>
+              <span className="text-orange-400">({user.plan})</span>
+            </div>
+            <button 
+              onClick={handleSignOut}
+              className="text-slate-400 hover:text-white transition flex items-center gap-1"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>
@@ -73,18 +97,17 @@ export default function Dashboard() {
               <div className="mb-4">
                 <label className="block text-slate-400 text-sm mb-2">Content Type</label>
                 <div className="flex flex-wrap gap-2">
-                  {contentTypes.map((type) => (
+                  {['Tweet', 'Thread', 'LinkedIn', 'Instagram'].map((type) => (
                     <button
-                      key={type.id}
-                      onClick={() => setContentType(type.id)}
+                      key={type}
+                      onClick={() => setContentType(type.toLowerCase())}
                       className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                        contentType === type.id 
+                        contentType === type.toLowerCase() 
                           ? 'bg-orange-500 text-white' 
                           : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                       }`}
                     >
-                      {type.icon}
-                      {type.name}
+                      {type}
                     </button>
                   ))}
                 </div>
@@ -118,7 +141,7 @@ export default function Dashboard() {
 
               <button
                 onClick={handleGenerate}
-                disabled={generating || !prompt.trim()}
+                disabled={generating || !prompt.trim() || generationsLeft <= 0}
                 className="w-full bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-400 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2"
               >
                 {generating ? (
@@ -129,7 +152,7 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5" />
-                    Generate Content
+                    Generate Content ({generationsLeft} left)
                   </>
                 )}
               </button>
@@ -152,14 +175,6 @@ export default function Dashboard() {
                       </button>
                     </div>
                     <pre className="text-white whitespace-pre-wrap font-sans">{content}</pre>
-                    <div className="flex gap-2 mt-4">
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-                        <Twitter className="w-4 h-4" /> Post to Twitter
-                      </button>
-                      <button className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-                        <Linkedin className="w-4 h-4" /> Post to LinkedIn
-                      </button>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -170,47 +185,33 @@ export default function Dashboard() {
           <div className="space-y-6">
             {/* Stats */}
             <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-              <h3 className="text-white font-semibold mb-4">Your Stats</h3>
+              <h3 className="text-white font-semibold mb-4">Your Account</h3>
               <div className="space-y-4">
                 <div className="flex justify-between">
+                  <span className="text-slate-400">Plan</span>
+                  <span className="text-orange-400 font-bold uppercase">{user.plan}</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-slate-400">Generations Left</span>
-                  <span className="text-orange-400 font-bold">5</span>
+                  <span className="text-white font-bold">{generationsLeft}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">This Month</span>
-                  <span className="text-white font-bold">12</span>
+                  <span className="text-slate-400">Email</span>
+                  <span className="text-white text-sm">{user.email}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Total Created</span>
-                  <span className="text-white font-bold">47</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-              <h3 className="text-white font-semibold mb-4">Quick Generate</h3>
-              <div className="space-y-2">
-                {['Motivation Monday', 'Product Launch', 'Ask a Question', 'Share a Tip'].map((topic, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPrompt(topic)}
-                    className="w-full text-left bg-slate-700/50 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm transition"
-                  >
-                    + {topic}
-                  </button>
-                ))}
               </div>
             </div>
 
             {/* Pro CTA */}
-            <div className="bg-gradient-to-br from-orange-600 to-pink-600 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-2">Go Pro</h3>
-              <p className="text-white/80 text-sm mb-4">Unlimited generations, all platforms, analytics & more!</p>
-              <Link href="/pricing" className="block w-full bg-white text-orange-600 py-2 rounded-lg font-semibold text-center">
-                Upgrade Now
-              </Link>
-            </div>
+            {user.plan === 'free' && (
+              <div className="bg-gradient-to-br from-orange-600 to-pink-600 rounded-2xl p-6">
+                <h3 className="text-white font-bold mb-2">Go Pro</h3>
+                <p className="text-white/80 text-sm mb-4">Unlimited generations, all platforms, analytics & more!</p>
+                <Link href="/pricing" className="block w-full bg-white text-orange-600 py-2 rounded-lg font-semibold text-center">
+                  Upgrade Now
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </main>
